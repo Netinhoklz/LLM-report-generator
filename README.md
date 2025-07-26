@@ -10,41 +10,46 @@ Uma aplicação Flask inteligente que transforma documentos brutos (PDF, DOCX, P
 ### Demonstração
 
 ```
-graph TD
-    A[Início: Usuário acessa a página] --> B{Envia Arquivo + Dados};
-    B --> C[Backend: Flask recebe a requisição];
-    C --> D{Arquivo é válido?};
-    D -- NÂO --> E[Feedback: Erro de tipo de arquivo];
-    E --> A;
-    D -- SIM --> F[Arquivo salvo em /uploads];
-    F --> G[**Pipeline de Processamento de IA é Iniciado**];
+sequenceDiagram
+    participant User as Usuário (Navegador)
+    participant Flask as Servidor Flask
+    participant Pipeline as Pipeline de IA
+    participant AI as Modelos de Linguagem (GPT)
 
-    subgraph "Pipeline Central (processar_e_gerar_pdf)"
-        G --> H[1. Converter Arquivo Original para Texto];
-        H --> I[2. IA Extrai Tópicos Principais];
-        I --> J[3. IA Gera Relatórios Detalhados];
-        J --> K[4. IA Sintetiza em Conclusão e Resumo];
-        K --> L[5. IA Monta o Relatório Mestre Final];
-        L --> M[6. Gera o Arquivo de Saída (.docx)];
+    User->>Flask: GET / (Acessa a página inicial)
+    Flask-->>User: Renderiza index.html
+
+    User->>Flask: POST / (Envia arquivo, autor e status)
+    Flask->>Flask: Valida e salva o arquivo em /uploads
+    
+    activate Pipeline
+    Flask->>Pipeline: Inicia o processamento com o arquivo salvo
+
+    Note right of Pipeline: O pipeline agora executa uma série de chamadas à IA
+    
+    Pipeline->>AI: 1. Envia texto para análise de tópicos
+    AI-->>Pipeline: Retorna JSON com tópicos
+    
+    loop Para cada tópico
+        Pipeline->>AI: 2. Envia tópico para gerar relatório detalhado
+        AI-->>Pipeline: Retorna relatório em Markdown
     end
+    
+    Pipeline->>AI: 3. Envia relatórios para síntese (conclusão, resumo, título)
+    AI-->>Pipeline: Retorna JSON com os textos sintetizados
 
-    M --> N{Processamento foi um sucesso?};
-    N -- NÂO --> O[Feedback: Erro crítico no processamento];
-    N -- SIM --> P[Feedback: Sucesso! Relatório gerado];
-    O --> Q[Página é renderizada sem link de download];
-    P --> R[Página é renderizada com o botão 'Baixar Word'];
-    R --> S[Ação: Usuário clica para baixar];
-    S --> T[Backend: Rota /download envia o arquivo];
-    T --> U[Fim: Download Concluído];
+    Pipeline->>AI: 4. Envia tudo para montagem do relatório final
+    AI-->>Pipeline: Retorna o relatório mestre completo em Markdown
 
-    %% Estilização para clareza
-    style G fill:#005A9C,stroke:#333,stroke-width:2px,color:white
-    style M fill:#198754,stroke:#333,stroke-width:2px,color:white
-    style U fill:#333,stroke:#333,stroke-width:2px,color:white
-    style B fill:#f4f7f9,stroke:#333
-    style R fill:#e8f5e9,stroke:#198754
-    style S fill:#e8f5e9,stroke:#198754
-    style O fill:#f8d7da,stroke:#dc3545
+    Pipeline->>Pipeline: 5. Converte o Markdown para o formato .docx
+
+    Pipeline-->>Flask: Retorna o nome do arquivo .docx gerado
+    deactivate Pipeline
+    
+    Flask-->>User: Renderiza index.html com o link de download
+    
+    User->>Flask: GET /download/nome-do-arquivo.docx
+    Flask-->>User: Envia o arquivo para download
 ```
     
 ---

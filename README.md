@@ -20,12 +20,12 @@ D -- Sim --> F[Arquivo salvo em /uploads];
 F --> G[**Início do Pipeline de IA**];
 
 subgraph "Pipeline de Processamento (processar_e_gerar_pdf)"
-    G --> H[1. Converter Arquivo Original para Texto (Markdown)];
-    H --> I[2. IA Analisa Texto e Extrai Tópicos (JSON)];
-    I --> J[3. IA Gera Relatórios Detalhados para cada Tópico];
-    J --> K[4. IA Sintetiza os Relatórios<br/>(Cria Conclusão, Resumo e Título)];
-    K --> L[5. IA Monta o Relatório Mestre Final (Markdown)];
-    L --> M[6. Gerar Arquivo de Saída .docx];
+G --> H[1. Converter Arquivo Original para Texto (Markdown)];
+H --> I[2. IA Analisa Texto e Extrai Tópicos (JSON)];
+I --> J[3. IA Gera Relatórios Detalhados para cada Tópico];
+J --> K[4. IA Sintetiza os Relatórios<br/>(Cria Conclusão, Resumo e Título)];
+K --> L[5. IA Monta o Relatório Mestre Final (Markdown)];
+L --> M[6. Gerar Arquivo de Saída .docx];
 end
 
 M --> N{Processamento Bem-Sucedido?};

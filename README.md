@@ -1,9 +1,3 @@
-Com certeza! Baseado na análise completa do seu código, preparei uma descrição profissional para o seu repositório no GitHub, incluindo um mapa mental em Markdown que detalha o funcionamento do sistema.
-
-Aqui está o conteúdo pronto para ser copiado para o seu arquivo `README.md`.
-
----
-
 # Gerador de Relatórios Estratégicos com IA
 
 [![Python](https://img.shields.io/badge/Python-3.9+-blue?logo=python&logoColor=white)](https://www.python.org/)
@@ -16,7 +10,76 @@ Uma aplicação Flask inteligente que transforma documentos brutos (PDF, DOCX, P
 ### Demonstração
 
 
-*(Sugestão: Grave um GIF mostrando o fluxo: upload do arquivo -> tela de carregamento com status -> aparecimento do link de download -> abertura do arquivo .docx gerado)*
+---
+markmap:
+  colorFreezeLevel: 2
+  maxWidth: 300
+---
+
+# Aplicação Flask: Gerador de Relatório com IA
+
+## Backend (Lógica do Servidor - Python)
+  - ### Estrutura do Arquivo
+    - **Importações**: Padrão, Terceiros, Módulos Locais
+    - **Prompts da IA (O "Cérebro")**: Definição de personas e tarefas detalhadas
+      - `prompt_analisador_topicos` (Analista Sênior)
+      - `prompt_gerador_texto_topicos` (Consultor Estratégico)
+      - `prompt_gerador_conclusao` (Chief Strategy Officer)
+      - `prompt_gerador_resumo` (Analista de Comunicação)
+      - `prompt_gerador_titulo` (Editor-Chefe)
+      - `prompt_gerador_relatorio` (Arquiteto de Relatórios)
+      - `prompt_gerador_html` (Especialista em Conversão)
+      - `promt_gerador_css` (Virtuoso de Impressão e Web)
+    - **Configuração da Aplicação**: Flask, Pastas, Chave Secreta
+    - **Logging**: Configuração detalhada para `app.log`
+    - **Funções Auxiliares**: `arquivo_permitido`, `extrair_com_regex`
+
+  - ### Pipeline Principal (`processar_e_gerar_pdf`)
+    - **Etapa 1**: Normalização (Arquivo de Entrada -> Texto Markdown)
+    - **Etapa 2**: Análise de Tópicos (IA -> JSON com Tópicos)
+      - *Técnica de Auto-Refinamento (loop)*
+    - **Etapa 3**: Aprofundamento (IA -> Relatórios Detalhados por Tópico)
+    - **Etapas 4-6**: Síntese (IA -> Conclusão, Resumo, Título)
+    - **Etapa 7**: Montagem Final (IA -> Relatório Mestre em Markdown)
+    - **Etapas 8-9**: Geração Web (IA -> HTML e CSS para PDF)
+      - **(ATENÇÃO: Código desativado/comentado)**
+    - **Etapa 10**: Geração do Arquivo de Saída
+      - **Geração de .docx (Funcionando)**
+      - Geração de .pdf (Atualmente quebrada)
+      - Retorna o nome do arquivo Word
+
+  - ### Rotas Flask (Controladores)
+    - **`GET / POST /`** (`upload_file`)
+      - Recebe o arquivo, autor e status
+      - Salva o arquivo em `/uploads`
+      - Inicia o pipeline de processamento
+      - Renderiza `index.html` com o resultado
+    - **`GET /status`**
+      - Lê a última linha de `app.log` contendo "ETAPA"
+      - Retorna o progresso para o frontend (JavaScript)
+    - **`GET /download/<filename>`**
+      - Fornece o arquivo da pasta `/processed_files` para download
+
+## Frontend (Interface do Usuário - `index.html`)
+  - ### Tecnologias
+    - HTML5
+    - Bootstrap 5 (via CDN)
+    - Google Fonts (Poppins)
+    - CSS Customizado (variáveis, etc.)
+  - ### Componentes da UI
+    - Cabeçalho e Descrição
+    - Formulário de Upload (4 passos)
+    - Alertas de Mensagens (Jinja2 `flash`)
+    - Seção de Download Condicional (Jinja2 `{% if %}`)
+    - Rodapé com créditos
+  - ### Lógica JavaScript (UX Inteligente)
+    - **Ao enviar o formulário (`submit` event)**
+      - Exibe um **Overlay de Carregamento**
+      - Desabilita o botão de envio
+    - **Loop de Verificação de Status (`setInterval`)**
+      - A cada 2 segundos, chama `fetch('/status')`
+      - Recebe a mensagem de progresso do backend
+      - Atualiza o texto no overlay de carregamento em tempo real
 
 ---
 

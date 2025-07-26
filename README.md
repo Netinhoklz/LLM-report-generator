@@ -11,30 +11,45 @@ Uma aplicação Flask inteligente que transforma documentos brutos (PDF, DOCX, P
 
 ```mermaid
 sequenceDiagram
-    participant User as Usuário (WhatsApp)
-    participant ZApi as Z-API
-    participant Server as Servidor Flask
-    participant AI as Lógica de IA (GPT)
+    participant User as Usuário (Navegador)
+    participant Flask as Servidor Flask
+    participant Pipeline as Pipeline de IA
+    participant AI as Modelos de Linguagem (GPT)
 
-    User->>ZApi: Envia Mensagem (Texto/Áudio/Imagem)
-    ZApi->>Server: POST /webhook com dados da msg
-    Server->>Server: Extrai conteúdo e identifica tipo
-    Note right of Server: Se áudio, transcreve.<br/>Se imagem, descreve.
-    Server->>Server: Acumula texto no buffer do usuário
-    Server->>Server: Reinicia o timer de 30s
-    User->>ZApi: Envia outra mensagem (dentro de 30s)
-    ZApi->>Server: POST /webhook ...
-    Server->>Server: Repete processo de acumulação e reinicia o timer
+    User->>Flask: GET / (Acessa a página inicial)
+    Flask-->>User: Renderiza index.html
+
+    User->>Flask: POST / (Envia arquivo, autor e status)
+    Flask->>Flask: Valida e salva o arquivo em /uploads
     
-    loop Timer Expira
-        Note over Server: Usuário parou de enviar mensagens.
-        Server->>Server: Timer de 30s expira.
+    activate Pipeline
+    Flask->>Pipeline: Inicia o processamento com o arquivo salvo
+
+    Note right of Pipeline: O pipeline agora executa uma série de chamadas à IA
+    
+    Pipeline->>AI: 1. Envia texto para análise de tópicos
+    AI-->>Pipeline: Retorna JSON com tópicos
+    
+    loop Para cada tópico
+        Pipeline->>AI: 2. Envia tópico para gerar relatório detalhado
+        AI-->>Pipeline: Retorna relatório em Markdown
     end
     
-    Server->>AI: Envia prompt consolidado
-    AI-->>Server: Retorna resposta completa
-    Server->>ZApi: Envia resposta para o usuário via API
-    ZApi-->>User: Entrega a resposta do bot
+    Pipeline->>AI: 3. Envia relatórios para síntese (conclusão, resumo, título)
+    AI-->>Pipeline: Retorna JSON com os textos sintetizados
+
+    Pipeline->>AI: 4. Envia tudo para montagem do relatório final
+    AI-->>Pipeline: Retorna o relatório mestre completo em Markdown
+
+    Pipeline->>Pipeline: 5. Converte o Markdown para o formato .docx
+
+    Pipeline-->>Flask: Retorna o nome do arquivo .docx gerado
+    deactivate Pipeline
+    
+    Flask-->>User: Renderiza index.html com o link de download
+    
+    User->>Flask: GET /download/nome-do-arquivo.docx
+    Flask-->>User: Envia o arquivo para download
 ```
     
 ---

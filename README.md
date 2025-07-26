@@ -10,7 +10,12 @@ Uma aplicação Flask inteligente que transforma documentos brutos (PDF, DOCX, P
 ### Demonstração
 
 
-
+graph TD;
+    A[Começar] --> B{É fácil?};
+    B -->|Sim| C[Continuar];
+    B -->|Não| D[Pedir ajuda];
+    C --> E[Terminar];
+    D --> E;
 ---
 
 ### 📋 Tabela de Conteúdos

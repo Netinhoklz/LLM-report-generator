@@ -9,8 +9,7 @@ Uma aplicação Flask inteligente que transforma documentos brutos (PDF, DOCX, P
 
 ### Demonstração
 
-```
-sequenceDiagram
+```sequenceDiagram
     participant User as Usuário (WhatsApp)
     participant ZApi as Z-API
     participant Server as Servidor Flask

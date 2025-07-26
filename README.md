@@ -11,38 +11,40 @@ Uma aplicação Flask inteligente que transforma documentos brutos (PDF, DOCX, P
 
 ```
 graph TD
-    A[Start: Usuário Acessa a Página] --> B{Envia Arquivo, Autor e Status};
-    B --> C[Backend: Flask Recebe a Requisição];
-    C --> D{Arquivo é Válido?};
-    D -- Não --> E[Flash: Erro de Tipo de Arquivo];
+    A[Início: Usuário acessa a página] --> B{Envia Arquivo + Dados};
+    B --> C[Backend: Flask recebe a requisição];
+    C --> D{Arquivo é válido?};
+    D -- NÂO --> E[Feedback: Erro de tipo de arquivo];
     E --> A;
-    D -- Sim --> F[Arquivo salvo em /uploads];
-    F --> G[**Início do Pipeline de IA**];
+    D -- SIM --> F[Arquivo salvo em /uploads];
+    F --> G[**Pipeline de Processamento de IA é Iniciado**];
 
-    subgraph "Pipeline de Processamento (processar_e_gerar_pdf)"
-        G --> H[1. Converter Arquivo Original para Texto (Markdown)];
-        H --> I[2. IA Analisa Texto e Extrai Tópicos (JSON)];
-        I --> J[3. IA Gera Relatórios Detalhados para cada Tópico];
-        J --> K[4. IA Sintetiza os Relatórios<br/>(Cria Conclusão, Resumo e Título)];
-        K --> L[5. IA Monta o Relatório Mestre Final (Markdown)];
-        L --> M[6. Gerar Arquivo de Saída .docx];
+    subgraph "Pipeline Central (processar_e_gerar_pdf)"
+        G --> H[1. Converter Arquivo Original para Texto];
+        H --> I[2. IA Extrai Tópicos Principais];
+        I --> J[3. IA Gera Relatórios Detalhados];
+        J --> K[4. IA Sintetiza em Conclusão e Resumo];
+        K --> L[5. IA Monta o Relatório Mestre Final];
+        L --> M[6. Gera o Arquivo de Saída (.docx)];
     end
 
-    M --> N{Processamento Bem-Sucedido?};
-    N -- Não --> O[Flash: Erro Crítico no Processamento];
-    N -- Sim --> P[Flash: Sucesso! Relatório Gerado];
-    O --> Q[Frontend: Renderiza a Página sem Link de Download];
-    P --> R[Frontend: Renderiza a Página com Botão de Download para o .docx];
-    R --> S[Usuário clica em 'Baixar Word'];
+    M --> N{Processamento foi um sucesso?};
+    N -- NÂO --> O[Feedback: Erro crítico no processamento];
+    N -- SIM --> P[Feedback: Sucesso! Relatório gerado];
+    O --> Q[Página é renderizada sem link de download];
+    P --> R[Página é renderizada com o botão 'Baixar Word'];
+    R --> S[Ação: Usuário clica para baixar];
     S --> T[Backend: Rota /download envia o arquivo];
-    T --> U[End: Download Concluído];
+    T --> U[Fim: Download Concluído];
 
-    %% Estilos para clareza
-    style G fill:#2a9d8f,stroke:#333,stroke-width:2px,color:white
-    style M fill:#e76f51,stroke:#333,stroke-width:2px,color:white
-    style U fill:#264653,stroke:#333,stroke-width:2px,color:white
-    style B fill:#e9c46a,stroke:#333
-    style R fill:#e9c46a,stroke:#333
+    %% Estilização para clareza
+    style G fill:#005A9C,stroke:#333,stroke-width:2px,color:white
+    style M fill:#198754,stroke:#333,stroke-width:2px,color:white
+    style U fill:#333,stroke:#333,stroke-width:2px,color:white
+    style B fill:#f4f7f9,stroke:#333
+    style R fill:#e8f5e9,stroke:#198754
+    style S fill:#e8f5e9,stroke:#198754
+    style O fill:#f8d7da,stroke:#dc3545
 ```
     
 ---

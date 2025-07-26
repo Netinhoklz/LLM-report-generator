@@ -10,76 +10,73 @@ Uma aplicação Flask inteligente que transforma documentos brutos (PDF, DOCX, P
 ### Demonstração
 
 
----
-markmap:
-  colorFreezeLevel: 2
-  maxWidth: 300
----
+graph TD;
+    subgraph "Visão Geral"
+        App[<--[ Aplicação Flask: Gerador de Relatório com IA ]-->]
+    end
 
-# Aplicação Flask: Gerador de Relatório com IA
+    subgraph "Frontend (Lado do Usuário)"
+        UI[Interface do Usuário (index.html)]
+        Form[Formulário de Upload]
+        JS[Feedback de Progresso (JS)]
+    end
 
-## Backend (Lógica do Servidor - Python)
-  - ### Estrutura do Arquivo
-    - **Importações**: Padrão, Terceiros, Módulos Locais
-    - **Prompts da IA (O "Cérebro")**: Definição de personas e tarefas detalhadas
-      - `prompt_analisador_topicos` (Analista Sênior)
-      - `prompt_gerador_texto_topicos` (Consultor Estratégico)
-      - `prompt_gerador_conclusao` (Chief Strategy Officer)
-      - `prompt_gerador_resumo` (Analista de Comunicação)
-      - `prompt_gerador_titulo` (Editor-Chefe)
-      - `prompt_gerador_relatorio` (Arquiteto de Relatórios)
-      - `prompt_gerador_html` (Especialista em Conversão)
-      - `promt_gerador_css` (Virtuoso de Impressão e Web)
-    - **Configuração da Aplicação**: Flask, Pastas, Chave Secreta
-    - **Logging**: Configuração detalhada para `app.log`
-    - **Funções Auxiliares**: `arquivo_permitido`, `extrair_com_regex`
+    subgraph "Backend (Lógica do Servidor)"
+        Routes[Rotas Flask (@app.route)]
+        Pipeline[Pipeline de Processamento (processar_e_gerar_pdf)]
+        Prompts{{Prompts da IA (O Cérebro)}}
+        Log[/app.log/]
+    end
+    
+    subgraph "Pipeline de IA (Etapas Sequenciais)"
+        P1[1. Normalização<br/>(Arquivo -> Texto)]
+        P2[2. Análise de Tópicos<br/>(IA -> JSON)]
+        P3[3. Aprofundamento<br/>(IA -> Relatórios Detalhados)]
+        P4[4. Síntese<br/>(IA -> Conclusão, Resumo, Título)]
+        P5[5. Montagem Final<br/>(IA -> Relatório Mestre)]
+        P6[6. Geração de Saída]
+    end
 
-  - ### Pipeline Principal (`processar_e_gerar_pdf`)
-    - **Etapa 1**: Normalização (Arquivo de Entrada -> Texto Markdown)
-    - **Etapa 2**: Análise de Tópicos (IA -> JSON com Tópicos)
-      - *Técnica de Auto-Refinamento (loop)*
-    - **Etapa 3**: Aprofundamento (IA -> Relatórios Detalhados por Tópico)
-    - **Etapas 4-6**: Síntese (IA -> Conclusão, Resumo, Título)
-    - **Etapa 7**: Montagem Final (IA -> Relatório Mestre em Markdown)
-    - **Etapas 8-9**: Geração Web (IA -> HTML e CSS para PDF)
-      - **(ATENÇÃO: Código desativado/comentado)**
-    - **Etapa 10**: Geração do Arquivo de Saída
-      - **Geração de .docx (Funcionando)**
-      - Geração de .pdf (Atualmente quebrada)
-      - Retorna o nome do arquivo Word
+    subgraph "Resultado Final"
+        Output[Arquivo Word (.docx)]
+    end
 
-  - ### Rotas Flask (Controladores)
-    - **`GET / POST /`** (`upload_file`)
-      - Recebe o arquivo, autor e status
-      - Salva o arquivo em `/uploads`
-      - Inicia o pipeline de processamento
-      - Renderiza `index.html` com o resultado
-    - **`GET /status`**
-      - Lê a última linha de `app.log` contendo "ETAPA"
-      - Retorna o progresso para o frontend (JavaScript)
-    - **`GET /download/<filename>`**
-      - Fornece o arquivo da pasta `/processed_files` para download
+    %% Conexões Principais
+    App --> UI;
+    App --> Routes;
 
-## Frontend (Interface do Usuário - `index.html`)
-  - ### Tecnologias
-    - HTML5
-    - Bootstrap 5 (via CDN)
-    - Google Fonts (Poppins)
-    - CSS Customizado (variáveis, etc.)
-  - ### Componentes da UI
-    - Cabeçalho e Descrição
-    - Formulário de Upload (4 passos)
-    - Alertas de Mensagens (Jinja2 `flash`)
-    - Seção de Download Condicional (Jinja2 `{% if %}`)
-    - Rodapé com créditos
-  - ### Lógica JavaScript (UX Inteligente)
-    - **Ao enviar o formulário (`submit` event)**
-      - Exibe um **Overlay de Carregamento**
-      - Desabilita o botão de envio
-    - **Loop de Verificação de Status (`setInterval`)**
-      - A cada 2 segundos, chama `fetch('/status')`
-      - Recebe a mensagem de progresso do backend
-      - Atualiza o texto no overlay de carregamento em tempo real
+    %% Fluxo do Usuário para o Backend
+    UI --> Form;
+    UI --> JS;
+    Form -- Envia Arquivo/Dados --> Routes;
+    JS -- Consulta a cada 2s --> Routes;
+
+    %% Lógica do Backend
+    Routes -- Inicia o Processo --> Pipeline;
+    Prompts -- Alimenta com Instruções --> Pipeline;
+    Pipeline -- Escreve Progresso --> Log;
+    Routes -- Lê Progresso para o JS --> Log;
+
+    %% Fluxo do Pipeline
+    Pipeline --> P1;
+    P1 --> P2;
+    P2 --> P3;
+    P3 --> P4;
+    P4 --> P5;
+    P5 --> P6;
+    P6 --> Output;
+
+    %% Entrega do Resultado
+    Routes -- Disponibiliza para Download --> Output;
+    
+    %% Estilização para Clareza
+    style App fill:#772fde,stroke:#333,stroke-width:4px,color:#fff
+    style UI fill:#bde0fe,stroke:#333,stroke-width:2px
+    style Routes fill:#ffb347,stroke:#333,stroke-width:2px
+    style Pipeline fill:#ffb347,stroke:#333,stroke-width:2px
+    style Log fill:#fdfd96,stroke:#333,stroke-width:2px
+    style Prompts fill:#fdfd96,stroke:#333,stroke-width:2px
+    style Output fill:#90ee90,stroke:#333,stroke-width:2px
 
 ---
 
